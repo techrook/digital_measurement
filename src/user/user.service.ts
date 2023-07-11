@@ -23,4 +23,16 @@ export class UserService {
             throw error
         }
     }
+    async deleteUser(userId: number,){
+        try {
+            const user = await this.prisma.user.delete({
+                where:{
+                    id: userId,
+                },
+            })
+            return {message:`${user.email} account has been deleted `}
+        } catch (error) {
+            throw error
+        }
+    }
 }
