@@ -1,3 +1,4 @@
+import { User } from '@prisma/client';
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto';
@@ -5,10 +6,32 @@ import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from '@nestjs/config';
+import * as nodemailer from 'nodemailer';
+
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService,private jwt:JwtService, private config: ConfigService) {}
+  private transporter: nodemailer.Transporter
+  constructor(private prisma: PrismaService,private jwt:JwtService, private config: ConfigService, 
+    ){
+      this.transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+          user: process.env.YOUR_APP_MAIL,
+          pass: process.env.YOUR_GENERATED_APP_PASSWORD,
+        },
+      });
+
+      //testing success
+this.transporter.verify((err,success)=>{
+  if(err){
+    console.log(err.message);
+  }else{
+    console.log("ready for messages")
+    console.log(success)
+  }
+})
+    }
   async signUp(dto: AuthDto) {
     try {
       
@@ -21,7 +44,14 @@ export class AuthService {
           hash,
         },
       });
-      return this.signToken(user.id, user.email);
+      const verificationToken = await this.signToken(user.id, user.email)
+      const url = `http://localhost:3333/auth/verify/${user.id}`
+      this.transporter.sendMail({
+        to:dto.email,
+        subject: 'Verify Account',
+        html: `Click <a href = '${url}'>here</a> to confirm your email.`
+      })
+      return verificationToken;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -31,7 +61,45 @@ export class AuthService {
       throw error;
     }
   }
-
+  async verifyUser(id:string) {
+    
+    // Check we have an id
+    if (!id) {
+        return ({ 
+             message: "Missing token" 
+        });
+    }
+    try{
+      const userid = parseInt(id)
+        // Step 2 - Find user with matching ID
+        const user = await this.prisma.user.findUnique({
+          where: {
+          id: userid,
+          }
+        })
+      
+        
+        if (!user) {
+           return ({ 
+              message: "User does not  exists" 
+           });
+        }
+        // Step 3 - Update user verification status to true
+         await  this.prisma.user.update({
+          where: {
+            id: userid,
+            },
+            data:{
+              verified: true
+          }
+         });
+        return ({
+              message: "Account Verified"
+        });
+     } catch (err) {
+        return ({Error:err});
+     }
+  }
   async signIn(dto: AuthDto){
     //find user by email
     const user = await this.prisma.user.findUnique({
