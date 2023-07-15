@@ -27,6 +27,11 @@ export class UserController {
   brandName(@GetUser("id") userId: number, @Body() dto: UserDto) {
     return this.userService.brandName(userId, dto);
   }
+  @Patch("changepassword")
+  changePassword(@GetUser("id") userId:number,@Body('oldPassword') oldPassword: string,
+  @Body('newPassword') newPassword: string, ){
+    return this.userService.changePassword(userId, newPassword, oldPassword)
+  }
   @Delete("delete")
   deleteUser(@GetUser("id") userId: number) {
     return this.userService.deleteUser(userId);

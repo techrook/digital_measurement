@@ -7,6 +7,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
+import { error } from 'console';
 
 
 @Injectable()
@@ -109,6 +110,7 @@ this.transporter.verify((err,success)=>{
     });
     // if user not foun throw error 
     if(!user) throw new ForbiddenException('Credentials incorrect')
+    if(user.verified == false) throw new ForbiddenException('verify your account first')
     //compare password
     const pwMatches = await argon.verify(user.hash, dto.password)
     //if password incorrect throw exception
