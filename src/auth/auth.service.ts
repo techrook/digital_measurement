@@ -1,5 +1,5 @@
 import { User } from '@prisma/client';
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto';
 import * as argon from 'argon2';
@@ -65,11 +65,7 @@ this.transporter.verify((err,success)=>{
   async verifyUser(id:string) {
     
     // Check we have an id
-    if (!id) {
-        return ({ 
-             message: "Missing token" 
-        });
-    }
+    if (!id) throw new HttpException('Bad request ', HttpStatus.BAD_REQUEST)
     try{
       const userid = parseInt(id)
         // Step 2 - Find user with matching ID
@@ -80,11 +76,7 @@ this.transporter.verify((err,success)=>{
         })
       
         
-        if (!user) {
-           return ({ 
-              message: "User does not  exists" 
-           });
-        }
+        if (!user) throw new HttpException('Not found', HttpStatus.NOT_FOUND)
         // Step 3 - Update user verification status to true
          await  this.prisma.user.update({
           where: {
@@ -109,7 +101,7 @@ this.transporter.verify((err,success)=>{
         },
     });
     // if user not foun throw error 
-    if(!user) throw new ForbiddenException('Credentials incorrect')
+    if(!user) throw new HttpException('Not found', HttpStatus.NOT_FOUND)
     if(user.verified == false) throw new ForbiddenException('verify your account first')
     //compare password
     const pwMatches = await argon.verify(user.hash, dto.password)
