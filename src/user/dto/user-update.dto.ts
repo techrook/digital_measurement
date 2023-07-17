@@ -8,3 +8,9 @@ export class UserDto{
     @IsString()
     brandName?:string
 }
+
+export class resetPWDDto{
+    @IsEmail()
+    email?:string
+
+}

@@ -6,13 +6,14 @@ import {
   HttpCode,
   HttpStatus,
   Patch,
+  Post,
   UseGuards,
 } from "@nestjs/common";
 import { User } from "@prisma/client";
 import { GetUser } from "src/auth/decorator";
 import { JwtGuard } from "src/auth/guard";
 import { UserService } from "./user.service";
-import { UserDto } from "./dto";
+import { UserDto, resetPWDDto } from "./dto";
 
 @UseGuards(JwtGuard)
 @Controller("users")
@@ -36,4 +37,8 @@ export class UserController {
   deleteUser(@GetUser("id") userId: number) {
     return this.userService.deleteUser(userId);
   }
-}
+  @Post("forgotpassword")
+  forgotPassword(@Body() dto: resetPWDDto){
+    return this.userService.forgotPassword(dto)
+  }
+} 
