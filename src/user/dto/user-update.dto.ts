@@ -1,16 +1,15 @@
-import { IsEmail, IsOptional, IsString } from "class-validator";
+import { IsEmail, IsOptional, IsString } from 'class-validator';
 
-export class UserDto{
-    @IsEmail()
-    @IsOptional()
-    email?:string
+export class UserDto {
+  @IsEmail()
+  @IsOptional()
+  email?: string;
 
-    @IsString()
-    brandName?:string
+  @IsString()
+  brandName?: string;
 }
 
-export class resetPWDDto{
-    @IsEmail()
-    email?:string
-
+export class resetPWDDto {
+  @IsEmail()
+  email?: string;
 }
