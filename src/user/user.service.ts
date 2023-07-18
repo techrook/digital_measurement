@@ -1,6 +1,6 @@
 import * as argon from 'argon2';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserDto, resetPWDDto } from './dto';
+import { UserDto, resetPWDDto, } from './dto';
 import { error } from 'console';
 import { ForbiddenException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from "@nestjs/jwt";
@@ -131,7 +131,7 @@ export class UserService {
             expiresIn: '15m',
             secret: secret,
           })
-          const URL = `http://localhost:3023/api/v1//user/reset-password/${resetToken}`
+          const URL = `http://localhost:3333/users/resetpassword/${resetToken}`
           this.transporter.sendMail({
             to:email,
             subject: 'Password Reset',
@@ -142,7 +142,43 @@ export class UserService {
             message: `check your mail to complete the reset password step`
           });
         } catch (error) {
-            return ({Error:error});
+          throw new error
         }
+    }
+    async resetPassword(token :string ){
+        try {
+            const secret = this.config.get('JWT_SECRET')
+            if(!token) throw new HttpException('Token Not Fount', HttpStatus.NOT_FOUND)
+            const decoded = await this.jwt.verifyAsync(token,
+            { secret: secret });
+            console.log(decoded);
+            
+            if(!decoded) throw new HttpException('Invalid Token', HttpStatus.BAD_REQUEST)
+
+            const redirectUrl = `http://localhost:3333/users/updatepassword/${decoded.sub}`;
+            return redirectUrl;
+        } catch (error) {
+            throw new HttpException('server error', HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+    async updatedResetPassword(userId:string, password:string){
+      try {
+        const hash = await argon.hash(password);
+        console.log(hash);
+        const user = await this.prisma.user.update({
+          where: {
+            id: Number(userId),
+          },
+          data: {
+            hash: hash,
+          },
+        })
+        return ({
+          message: `your password has successfully been reseted and updated`
+        })
+      } catch (error) {
+        console.log(error)
+        throw new HttpException('server error', HttpStatus.INTERNAL_SERVER_ERROR)
+      }
     }
 }

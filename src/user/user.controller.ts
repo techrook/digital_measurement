@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Patch,
   Post,
   UseGuards,
@@ -41,4 +42,13 @@ export class UserController {
   forgotPassword(@Body() dto: resetPWDDto){
     return this.userService.forgotPassword(dto)
   }
+  @Get('/resetpassword/:token')
+  resetPassword(@Param('token') token: string) {
+    return this.userService.resetPassword(token)
+}
+@Patch("/updatepassword/:id")
+updatedResetPassword(@Param('id') id:string, @Body('password') password: string){
+  return this.userService.updatedResetPassword(id, password)
+}
+
 } 

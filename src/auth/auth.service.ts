@@ -89,7 +89,7 @@ this.transporter.verify((err,success)=>{
               message: "Account Verified"
         });
      } catch (err) {
-        return ({Error:err});
+      throw new err
      }
   }
   async signIn(dto: AuthDto){
