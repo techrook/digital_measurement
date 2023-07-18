@@ -37,6 +37,8 @@ this.transporter.verify((err,success)=>{
       
       // generate password hash
       const hash = await argon.hash(dto.password);
+      if(!hash) throw new HttpException("password not hashed", HttpStatus.INTERNAL_SERVER_ERROR)
+      
       // save the new user in the db
       const user = await this.prisma.user.create({
         data: {
@@ -44,6 +46,7 @@ this.transporter.verify((err,success)=>{
           hash,
         },
       });
+      if(!user) throw new HttpException("user account not created, an error occured", HttpStatus.INTERNAL_SERVER_ERROR)
       const verificationToken = await this.signToken(user.id, user.email)
       const url = `http://localhost:3333/auth/verify/${user.id}`
       this.transporter.sendMail({
@@ -58,7 +61,7 @@ this.transporter.verify((err,success)=>{
           throw new ForbiddenException('Credentials taken');
         }
       }
-      throw error;
+      throw new HttpException('server error', HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
   async verifyUser(id:string) {
@@ -89,7 +92,7 @@ this.transporter.verify((err,success)=>{
               message: "Account Verified"
         });
      } catch (err) {
-      throw new err
+      throw new HttpException('server error', HttpStatus.INTERNAL_SERVER_ERROR)
      }
   }
   async signIn(dto: AuthDto){

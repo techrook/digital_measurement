@@ -31,12 +31,7 @@ export class UserService {
     }
     async brandName(userId: number, dto:UserDto){
         try {
-            if (!userId)throw new HttpException({
-                status: HttpStatus.BAD_REQUEST,
-                error: 'user id is needed',
-              }, HttpStatus.BAD_REQUEST, {
-                cause: error
-              });
+          if (!userId) throw new HttpException('Not found', HttpStatus.NOT_FOUND)
             const user = await this.prisma.user.update({
                 where:{
                     id: userId,
@@ -45,21 +40,17 @@ export class UserService {
                     brandName: dto.brandName
                 }
             })
+            if(!user) throw new HttpException('Not found or error updating brand name', HttpStatus.NOT_FOUND)
             delete user.hash;
 
             return user
         } catch (error) {
-            throw error
+          throw new HttpException('server error', HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
     async deleteUser(userId: number,){
         try {
-            if (!userId)throw new HttpException({
-                status: HttpStatus.BAD_REQUEST,
-                error: 'user id is needed',
-              }, HttpStatus.BAD_REQUEST, {
-                cause: error
-              });
+          if (!userId) throw new HttpException('Not found', HttpStatus.NOT_FOUND)
             const user = await this.prisma.user.delete({
                 where:{
                     id: userId,
@@ -67,7 +58,7 @@ export class UserService {
             })
             return {message:`${user.email} account has been deleted `}
         } catch (error) {
-            throw error
+          throw new HttpException('server error', HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
     async changePassword(userId: number, newPassword:string, oldpassword:string){
@@ -111,7 +102,7 @@ export class UserService {
                   return {message:`${updateUser.email} password has been updated `}
               
         } catch (error) {
-            throw error
+          throw new HttpException('server error', HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
     async forgotPassword(dto:resetPWDDto){
@@ -142,7 +133,7 @@ export class UserService {
             message: `check your mail to complete the reset password step`
           });
         } catch (error) {
-          throw new error
+          throw new HttpException('server error', HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
     async resetPassword(token :string ){
