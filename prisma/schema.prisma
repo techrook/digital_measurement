@@ -19,6 +19,28 @@ model User {
   hash String
 
   brandName String?
+  measurements Measurement[]
 
   @@map("users")
+}
+model Measurement{
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  gender String
+  cloth_Owner_name String
+  chest Int?
+  Waist Int?
+  Hips Int?
+  neck_to_waist Int?
+  waist_down_to_desired_lenght Int?
+  laps Int?
+  wrist Int?
+  ankle Int?
+  shoulders Int?
+  neck Int?
+  dress_design String?
+  tailor User @relation(fields: [userId], references: [id])
+  userId Int @default(1)
 }
