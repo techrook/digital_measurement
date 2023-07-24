@@ -5,9 +5,10 @@ import {
   UseGuards,
   UploadedFile,
   UseInterceptors,
+  Get,
+  Param,
 } from '@nestjs/common';
 import { MeasurementService } from './measurement.service';
-import { CreateMeasurementDto } from './dto';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -49,18 +50,18 @@ export class MeasurementController {
       wrist,
       ankle,
       shoulders,
-      neck
+      neck,
     );
   }
-
-  //   @Post('upload')
-  //   @UseInterceptors(FileInterceptor('file')) // 'file' is the field name for the uploaded file in the request
-  //   async uploadImage(@UploadedFile() file: Express.Multer.File) {
-  //     try {
-  //       const imageUrl = await this.measurementService.uploadImage(file);
-  //       return { message: 'Image uploaded successfully', imageUrl };
-  //     } catch (error) {
-  //       throw new HttpException('Failed to upload image', HttpStatus.INTERNAL_SERVER_ERROR);
-  //     }
-  //   }
+  @Get('')
+  async getMyMeasurements(@GetUser('id') userId: number) {
+    return this.measurementService.getMyMeasurements(userId);
+  }
+  @Get('/:measurementId')
+  async getAMeasurements(
+    @GetUser('id') userId: number,
+    @Param('measurementId') measurementId: number,
+  ) {
+    return this.measurementService.getAMeasurements(userId, measurementId);
+  }
 }

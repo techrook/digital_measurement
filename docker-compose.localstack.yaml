@@ -1,0 +1,18 @@
+version: '3'  # Specifies the version of the Docker Compose file format being used (Version 3 in this case).
+
+services:
+  localstack:  # Defines a service named "localstack".
+    image: localstack/localstack:latest  # Specifies the Docker image to use for the "localstack" service. The ":latest" tag means it will use the latest version of the LocalStack image available on Docker Hub.
+    environment:
+      - AWS_DEFAULT_REGION=us-east-1  # Sets the default AWS region for LocalStack to "us-east-1".
+      - EDGE_PORT=4566  # Sets the edge port for LocalStack to 4566.
+      - SERVICES=s3  # Specifies the AWS services to run in LocalStack. In this case, it is set to only run the S3 service.
+    ports:
+      - 4566-4583:4566-4583  # Maps the container's ports 4566 to 4583 to the host machine's ports 4566 to 4583. This allows you to access LocalStack's services via the specified ports on your localhost.
+    volumes:
+      - localstack_volume:/tmp/localstack  # Specifies a volume to mount inside the container at the "/tmp/localstack" path. This volume is used to store data related to LocalStack.
+
+      - /var/run/docker.sock:/var/run/docker.sock  # Mounts the Docker socket from the host machine to the container. This allows LocalStack to interact with the Docker daemon on the host machine.
+
+volumes:
+  localstack_volume:  # Defines a named volume named "localstack_volume". This volume is used to store data related to LocalStack, as specified in the "volumes" section under the "localstack" service.

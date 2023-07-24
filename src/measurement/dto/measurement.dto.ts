@@ -1,44 +1,42 @@
-import { IsInt, IsString } from "class-validator";
+import { IsInt, IsString } from 'class-validator';
 
+export class CreateMeasurementDto {
+  @IsString()
+  gender?: string;
 
-export class CreateMeasurementDto{
-    @IsString()
-    gender?:string
+  @IsString()
+  cloth_Owner_name?: string;
 
-    @IsString()
-    cloth_Owner_name?:string
+  @IsInt()
+  chest?: number;
 
-    @IsInt()
-    chest?:number
+  @IsInt()
+  Waist?: number;
 
-    @IsInt()
-    Waist?:number
+  @IsInt()
+  Hips?: number;
 
-    @IsInt()
-    Hips?:number
+  @IsInt()
+  neck_to_waist?: number;
 
-    @IsInt()
-    neck_to_waist?:number
+  @IsInt()
+  waist_down_to_desired_lenght?: number;
 
-    @IsInt()
-    waist_down_to_desired_lenght?:number
+  @IsInt()
+  laps?: number;
 
-    @IsInt()
-    laps?:number
+  @IsInt()
+  wrist?: number;
 
-    @IsInt()
-    wrist?:number
+  @IsInt()
+  ankle?: number;
 
-    @IsInt()
-    ankle?:number
+  @IsInt()
+  shoulders?: number;
 
-    @IsInt()
-    shoulders?:number
+  @IsInt()
+  neck?: number;
 
-    @IsInt()
-    neck?:number
-
-    @IsString()
-    dress_design?:  string
-
+  @IsString()
+  dress_design?: string;
 }
