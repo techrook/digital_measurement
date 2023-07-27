@@ -40,3 +40,18 @@ export class CreateMeasurementDto {
   @IsString()
   dress_design?: string;
 }
+
+export class UpdateMeasurementDto {
+  gender?: string;
+  cloth_Owner_name?: string;
+  chest?: number;
+  Waist?: number;
+  Hips?: number;
+  neck_to_waist?: number;
+  waist_down_to_desired_lenght?: number;
+  laps?: number;
+  wrist?: number;
+  ankle?: number;
+  shoulders?: number;
+  neck?: number;
+}

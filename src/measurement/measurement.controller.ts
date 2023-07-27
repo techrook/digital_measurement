@@ -7,11 +7,16 @@ import {
   UseInterceptors,
   Get,
   Param,
+  Put,
+  Delete,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { MeasurementService } from './measurement.service';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateMeasurementDto } from './dto';
 
 @UseGuards(JwtGuard)
 @Controller('measurement')
@@ -63,5 +68,19 @@ export class MeasurementController {
     @Param('measurementId') measurementId: number,
   ) {
     return this.measurementService.getAMeasurements(userId, measurementId);
+  }
+  @Put(':id')
+  async updateMeasurement(
+    @Body() update,
+    @Param('id') measurementId: number,
+  ) {
+    return this.measurementService.updateMeasurement(update, measurementId);
+  }
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(':measurementId')
+  async deleteMeasurement(
+    @Param('measurementId') measurementId: number,
+  ){
+    return this.measurementService.deleteMeasurement(measurementId)
   }
 }

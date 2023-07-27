@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { UpdateMeasurementDto } from './dto';
 
 @Injectable()
 export class MeasurementService {
@@ -119,6 +120,52 @@ export class MeasurementService {
           HttpStatus.NOT_FOUND,
         );
       return measurement;
+    } catch (error) {
+      throw new HttpException('Server error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  async updateMeasurement(update: UpdateMeasurementDto, measurementId:number) {
+    try {
+      const existingMeasurement = await this.prisma.measurement.findUnique({
+        where: {
+         id:Number(measurementId)
+        },
+      });
+
+      if (!existingMeasurement) {
+        throw new HttpException('Measurement not found', HttpStatus.NOT_FOUND);
+      }
+
+      // Update the measurement in the database
+      const updatedRecord = await this.prisma.measurement.update({
+        where: {
+          id:Number(measurementId)
+        },
+        data: update,
+      });
+      return updatedRecord;
+    } catch (error) {
+      throw new HttpException('Server error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  async deleteMeasurement(measurementId:number){
+    try {
+      const existingMeasurement = await this.prisma.measurement.findUnique({
+        where: {
+         id:Number(measurementId)
+        },
+      });
+      if (!existingMeasurement) {
+        throw new HttpException('Measurement not found', HttpStatus.NOT_FOUND);
+      }
+      const deleteMeasurement = await this.prisma.measurement.delete({
+        where:{
+          id: Number(measurementId)
+        }
+      })
+
+      return deleteMeasurement
+
     } catch (error) {
       throw new HttpException('Server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
