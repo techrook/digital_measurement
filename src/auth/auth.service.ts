@@ -40,6 +40,14 @@ export class AuthService {
   }
   async signUp(dto: AuthDto) {
     try {
+      if(!dto.email) throw new HttpException(
+        'user must sign up with mail',
+        HttpStatus.BAD_REQUEST,
+      );
+      if(!dto.password) throw new HttpException(
+        'user must sign up with a password',
+        HttpStatus.BAD_REQUEST,
+      );
       // generate password hash
       const hash = await argon.hash(dto.password);
       if (!hash)
