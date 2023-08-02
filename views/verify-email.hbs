@@ -1,21 +1,61 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify Email</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+      }
+      
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      
+      h1 {
+        color: #007bff;
+      }
+      
+      p {
+        margin-top: 10px;
+        font-size: 18px;
+        line-height: 1.5;
+      }
+      
+      .btn {
+        display: inline-block;
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 4px;
+        text-decoration: none;
+        margin-top: 20px;
+        cursor: pointer;
+      }
+      
+      .btn:hover {
+        background-color: #0056b3;
+      }
+    </style>
 </head>
 <body>
-    <h1>Email Verification</h1>
-    <p>Thank you for signing up. Please click the link in the email we sent you to verify your account.</p>
+    <div class="container">
+        <h1>Email Verification</h1>
+        <p>Thank you for signing up. Please click the link in the email we sent you to verify your account.</p>
+    </div>
 
     <script>
       // Fetch the token from storage (e.g., localStorage)
       const token = localStorage.getItem('authToken');
 
-      // Use the token to verify the email with the server
-      // Implement your verification logic here
+      console.log(token)
     </script>
 </body>
 </html>
+

@@ -11,14 +11,15 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Render,
 } from '@nestjs/common';
 import { MeasurementService } from './measurement.service';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UpdateMeasurementDto } from './dto';
 
-@UseGuards(JwtGuard)
+
+
 @Controller('measurement')
 export class MeasurementController {
   constructor(private measurementService: MeasurementService) {}
@@ -58,10 +59,19 @@ export class MeasurementController {
       neck,
     );
   }
+  @Get('home')
+  @Render('home.hbs') // Render the "signup" view
+  home() {
+    return { message: 'home' };
+  }
+
+  @UseGuards(JwtGuard)
   @Get('')
   async getMyMeasurements(@GetUser('id') userId: number) {
-    return this.measurementService.getMyMeasurements(userId);
+    const measurements = await this.measurementService.getMyMeasurements(userId);
+    return measurements
   }
+  @UseGuards(JwtGuard)
   @Get('/:measurementId')
   async getAMeasurements(
     @GetUser('id') userId: number,
@@ -69,6 +79,7 @@ export class MeasurementController {
   ) {
     return this.measurementService.getAMeasurements(userId, measurementId);
   }
+  @UseGuards(JwtGuard)
   @Put(':id')
   async updateMeasurement(
     @Body() update,
@@ -77,6 +88,7 @@ export class MeasurementController {
     return this.measurementService.updateMeasurement(update, measurementId);
   }
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtGuard)
   @Delete(':measurementId')
   async deleteMeasurement(
     @Param('measurementId') measurementId: number,

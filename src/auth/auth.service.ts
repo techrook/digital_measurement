@@ -40,6 +40,10 @@ export class AuthService {
   }
   async signUp(dto: AuthDto) {
     try {
+      if(!dto) throw new HttpException(
+        'enter both email and password',
+        HttpStatus.BAD_REQUEST,
+      );
       if(!dto.email) throw new HttpException(
         'user must sign up with mail',
         HttpStatus.BAD_REQUEST,
