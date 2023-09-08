@@ -23,7 +23,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('measurement')
 export class MeasurementController {
   constructor(private measurementService: MeasurementService) {}
-
+  
+  @UseGuards(JwtGuard)
   @Post('addmeasurement')
   @UseInterceptors(FileInterceptor('file'))
   async addMeasurement(

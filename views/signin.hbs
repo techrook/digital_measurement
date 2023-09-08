@@ -111,8 +111,8 @@ const userPassword = document.getElementById('password');
       return; // Stop the execution here, so the href won't change
     }
     const data = await response.json();
-    const token = data.token;
-localStorage.setItem('authToken',JSON.stringify(token) );
+    const token = data.access_token;
+ await localStorage.setItem('authToken',JSON.stringify(token) );
 
 
       
