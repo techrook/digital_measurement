@@ -100,7 +100,7 @@ export class AuthService {
         <body>
           <h1>Account Verified</h1>
           <p>Your account has been successfully verified. You can now log in.</p>
-          <p><a href="http://localhost:3333/auth/signin">Click here to log in</a></p>
+          <p><a href="http://localhost:3333/measurement/">Click here to log in</a></p>
         </body>
       </html>`; // HTML link for emails or web responses
   }

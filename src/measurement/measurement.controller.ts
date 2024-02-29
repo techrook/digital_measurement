@@ -60,11 +60,6 @@ export class MeasurementController {
       neck,
     );
   }
-  @Get('home')
-  @Render('home.hbs') // Render the "signup" view
-  home() {
-    return { message: 'home' };
-  }
 
   @UseGuards(JwtGuard)
   @Get('')
@@ -83,7 +78,7 @@ export class MeasurementController {
   @UseGuards(JwtGuard)
   @Put(':id')
   async updateMeasurement(
-    @Body() update,
+    @Body() update:object,
     @Param('id') measurementId: number,
   ) {
     return this.measurementService.updateMeasurement(update, measurementId);

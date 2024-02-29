@@ -60,7 +60,7 @@ export class MeasurementService {
         ACL: 'public-read',
         ContentType: file.mimetype,
       });
-      const response = await this.s3Client.send(putObjectCommand);
+       await this.s3Client.send(putObjectCommand);
 
       const imageUrl = `https://${this.s3BucketName}.s3.amazonaws.com/${file.originalname}`;
       console.log(imageUrl);
@@ -86,9 +86,7 @@ export class MeasurementService {
         throw new HttpException('bad request', HttpStatus.BAD_REQUEST);
       return measurement;
     } catch (error) {
-      if (error) {
-        console.error('Error metadata:', error);
-      }
+      
       throw new HttpException('Server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
