@@ -39,66 +39,77 @@ export class AuthService {
     });
   }
   async signUp(dto: AuthDto) {
-      if(!dto) throw new HttpException(
+    if (!dto)
+      throw new HttpException(
         'enter both email and password',
         HttpStatus.BAD_REQUEST,
       );
-      // generate password hash
-      const hash = await argon.hash(dto.password);
-            const existingUser = await this.prisma.user.findUnique({
+    // generate password hash
+    const hash = await argon.hash(dto.password);
+    const existingUser = await this.prisma.user.findUnique({
       where: {
         email: dto.email,
       },
     });
     // if user not foun throw error
-    if (existingUser) throw new HttpException('Email already in use', HttpStatus.BAD_REQUEST);
-      // save the new user in the db
-      const user = await this.prisma.user.create({
-        data: {
-          email: dto.email,
-          hash,
-        },
-      });
-      const verificationToken = await this.signToken(user.id, user.email);
-      const url = `http://localhost:3333/auth/verify/${user.id}`;
-      this.transporter.sendMail({
-        to: dto.email,
-        subject: 'Verify Account',
-        html: `Click <a href = '${url}'>here</a> to confirm your email.`,
-      });
-      return verificationToken;
-    
+    if (existingUser)
+      throw new HttpException('Email already in use', HttpStatus.BAD_REQUEST);
+    // save the new user in the db
+    const user = await this.prisma.user.create({
+      data: {
+        email: dto.email,
+        hash,
+      },
+    });
+    const verificationToken = await this.signToken(user.id, user.email);
+    const url = `http://localhost:3333/auth/verify/${user.id}`;
+    this.transporter.sendMail({
+      to: dto.email,
+      subject: 'Verify Account',
+      html: `Click <a href = '${url}'>here</a> to confirm your email.`,
+    });
+    return verificationToken;
   }
   async verifyUser(id: string) {
     // Check we have an id
     if (!id) throw new HttpException('Bad request ', HttpStatus.BAD_REQUEST);
-    try {
-      const userid = parseInt(id);
-      // Step 2 - Find user with matching ID
-      const user = await this.prisma.user.findUnique({
-        where: {
-          id: userid,
-        },
-      });
 
-      if (!user) throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-      // Step 3 - Update user verification status to true
-      await this.prisma.user.update({
-        where: {
-          id: userid,
-        },
-        data: {
-          verified: true,
-        },
-      });
-      return {
-        message: 'Account Verified',
-      };
-    } catch (err) {
-      throw new HttpException('server error', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    const userid = parseInt(id);
+    // Step 2 - Find user with matching ID
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userid,
+      },
+    });
+
+    if (!user) throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    // Step 3 - Update user verification status to true
+    await this.prisma.user.update({
+      where: {
+        id: userid,
+      },
+      data: {
+        verified: true,
+      },
+    });
+    return `
+      <html>
+        <head>
+          <title>Account Verified</title>
+        </head>
+        <body>
+          <h1>Account Verified</h1>
+          <p>Your account has been successfully verified. You can now log in.</p>
+          <p><a href="http://localhost:3333/auth/signin">Click here to log in</a></p>
+        </body>
+      </html>`; // HTML link for emails or web responses
   }
   async signIn(dto: AuthDto) {
+    if (!dto)
+      throw new HttpException(
+        'enter both email and password',
+        HttpStatus.BAD_REQUEST,
+      );
     //find user by email
     const user = await this.prisma.user.findUnique({
       where: {
