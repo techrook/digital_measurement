@@ -39,27 +39,19 @@ export class AuthService {
     });
   }
   async signUp(dto: AuthDto) {
-    try {
-      if(!dto) return new HttpException(
+      if(!dto) throw new HttpException(
         'enter both email and password',
-        HttpStatus.BAD_REQUEST,
-      );
-      if(!dto.email) return new HttpException(
-        'user must sign up with mail',
-        HttpStatus.BAD_REQUEST,
-      );
-      if(!dto.password) return new HttpException(
-        'user must sign up with a password',
         HttpStatus.BAD_REQUEST,
       );
       // generate password hash
       const hash = await argon.hash(dto.password);
-      if (!hash)
-      return new HttpException(
-          'password not hashed',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-
+            const existingUser = await this.prisma.user.findUnique({
+      where: {
+        email: dto.email,
+      },
+    });
+    // if user not foun throw error
+    if (existingUser) throw new HttpException('Email already in use', HttpStatus.BAD_REQUEST);
       // save the new user in the db
       const user = await this.prisma.user.create({
         data: {
@@ -67,11 +59,6 @@ export class AuthService {
           hash,
         },
       });
-      if (!user)
-      return new HttpException(
-          'user account not created, an error occured',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
       const verificationToken = await this.signToken(user.id, user.email);
       const url = `http://localhost:3333/auth/verify/${user.id}`;
       this.transporter.sendMail({
@@ -80,9 +67,7 @@ export class AuthService {
         html: `Click <a href = '${url}'>here</a> to confirm your email.`,
       });
       return verificationToken;
-    } catch (error) {
-      return new HttpException('server error', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    
   }
   async verifyUser(id: string) {
     // Check we have an id
