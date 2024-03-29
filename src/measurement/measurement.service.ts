@@ -62,8 +62,7 @@ export class MeasurementService {
       });
        await this.s3Client.send(putObjectCommand);
 
-      const imageUrl = `https://${this.s3BucketName}.s3.amazonaws.com/${file.originalname}`;
-      console.log(imageUrl);
+       const imageUrl = `https://${this.s3BucketName}.s3.amazonaws.com/${uniqueFilename}`;
       const measurement = await this.prisma.measurement.create({
         data: {
           gender: gender,

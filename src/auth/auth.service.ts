@@ -101,7 +101,7 @@ export class AuthService {
           <h1>Account Verified</h1>
           <p>Your account has been successfully verified. You can now log in.</p>
           <p><a href="http://localhost:3333/measurement/">Click here to log in</a></p>
-        </body>
+        </body> 
       </html>`; // HTML link for emails or web responses
   }
   async signIn(dto: AuthDto) {
