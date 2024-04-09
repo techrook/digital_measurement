@@ -12,6 +12,7 @@ import {
   HttpCode,
   HttpStatus,
   Render,
+  Req,
 } from '@nestjs/common';
 import { MeasurementService } from './measurement.service';
 import { GetUser } from 'src/auth/decorator';
@@ -42,7 +43,9 @@ export class MeasurementController {
     @Body('shoulders') shoulders: number,
     @Body('neck') neck: number,
     @UploadedFile() file: Express.Multer.File,
+    @Req() req: Request,
   ) {
+    console.log(req.body); 
     return this.measurementService.addMeasurement(
       file,
       userId,
