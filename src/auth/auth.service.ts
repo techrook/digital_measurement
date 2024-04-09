@@ -7,7 +7,7 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto';
 import * as argon from 'argon2';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+// import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
@@ -38,7 +38,7 @@ export class AuthService {
       }
     });
   }
-  async signUp(dto: AuthDto) {
+  async signUp(dto: AuthDto):Promise<object> {
     if (!dto)
       throw new HttpException(
         'enter both email and password',
@@ -70,7 +70,7 @@ export class AuthService {
     });
     return verificationToken;
   }
-  async verifyUser(id: string) {
+  async verifyUser(id: string):Promise<string> {
     // Check we have an id
     if (!id) throw new HttpException('Bad request ', HttpStatus.BAD_REQUEST);
 
@@ -105,7 +105,7 @@ export class AuthService {
       </html>`; // HTML link for emails or web responses
       // need to change link to correct page link 
   }
-  async signIn(dto: AuthDto) {
+  async signIn(dto: AuthDto):Promise<object> {
     if (!dto)
       throw new HttpException(
         'enter both email and password',
