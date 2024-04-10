@@ -117,7 +117,7 @@ export class AuthService {
       },
     });
     // if user not foun throw error
-    if (!user) throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    if (!user) throw new HttpException('email not found', HttpStatus.NOT_FOUND);
     if (user.verified == false)
       throw new ForbiddenException('verify your account first');
     //compare password
