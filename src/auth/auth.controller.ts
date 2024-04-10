@@ -22,7 +22,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('signin')
-  signIn(@Body() dto: AuthDto) {
+  signIn(@Body(new ValidationPipe()) dto: AuthDto) {
     return this.authService.signIn(dto);
   }
   @HttpCode(HttpStatus.OK)
