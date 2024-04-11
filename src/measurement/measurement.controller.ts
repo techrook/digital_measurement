@@ -11,7 +11,6 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
-  ValidationPipe,
   Req,
   UsePipes
 } from '@nestjs/common';

@@ -10,12 +10,23 @@ export class FormDataValidationPipe implements PipeTransform<any> {
       return value;
     }
 
+    // Convert string values to numbers for numeric fields
+    for (const key in value) {
+      if (typeof value[key] === 'string' && !isNaN(+value[key])) {
+        if (key === 'gender' || key === 'cloth_Owner_name') {
+          // Leave string fields as they are
+          continue;
+        }
+        // Convert numeric fields to numbers
+        value[key] = +value[key];
+      }
+    }
+
     const object = plainToClass(metatype, value);
     const errors = await validate(object);
     if (errors.length > 0) {
-      throw new BadRequestException('Validation failed');
+      throw new BadRequestException(`Validation failed, ${errors}`);
     }
-    console.
     return object;
   }
 
