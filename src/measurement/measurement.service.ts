@@ -60,11 +60,9 @@ export class MeasurementService {
         ACL: 'public-read',
         ContentType: file.mimetype,
       });
-      console.log(putObjectCommand)
        await this.s3Client.send(putObjectCommand);
 
        const imageUrl = `https://${this.s3BucketName}.s3.amazonaws.com/${uniqueFilename}`;
-       console.log(imageUrl)
       const measurement = await this.prisma.measurement.create({
         data: {
           gender: gender,
@@ -83,7 +81,6 @@ export class MeasurementService {
           dress_design: imageUrl,
         },
       });
-      console.log(measurement)
       if (!measurement)
         throw new HttpException('bad request', HttpStatus.BAD_REQUEST);
       return measurement;

@@ -11,15 +11,16 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
-  Render,
+  ValidationPipe,
   Req,
+  UsePipes
 } from '@nestjs/common';
 import { MeasurementService } from './measurement.service';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-
-
+import { CreateMeasurementDto } from './dto';
+import { FormDataValidationPipe } from './pipes';
 
 @Controller('measurement')
 export class MeasurementController {
@@ -28,20 +29,10 @@ export class MeasurementController {
   @UseGuards(JwtGuard)
   @Post('addmeasurement')
   @UseInterceptors(FileInterceptor('file'))
+  @UsePipes(FormDataValidationPipe)
   async addMeasurement(
     @GetUser('id') userId: number,
-    @Body('gender') gender: string,
-    @Body('cloth_Owner_name') cloth_Owner_name: string,
-    @Body('chest') chest: number,
-    @Body('Waist') Waist: number,
-    @Body('Hips') Hips: number,
-    @Body('neck_to_waist') neck_to_waist: number,
-    @Body('waist_down_to_desired_lenght') waist_down_to_desired_lenght: number,
-    @Body('laps') laps: number,
-    @Body('wrist') wrist: number,
-    @Body('ankle') ankle: number,
-    @Body('shoulders') shoulders: number,
-    @Body('neck') neck: number,
+    @Body() dto: CreateMeasurementDto,
     @UploadedFile() file: Express.Multer.File,
     @Req() req: Request,
   ) {
@@ -49,18 +40,18 @@ export class MeasurementController {
     return this.measurementService.addMeasurement(
       file,
       userId,
-      gender,
-      cloth_Owner_name,
-      chest,
-      Waist,
-      Hips,
-      neck_to_waist,
-      waist_down_to_desired_lenght,
-      laps,
-      wrist,
-      ankle,
-      shoulders,
-      neck,
+      dto.gender,
+      dto.cloth_Owner_name,
+      dto.chest,
+      dto.Waist,
+      dto.Hips,
+      dto.neck_to_waist,
+      dto.waist_down_to_desired_lenght,
+      dto.laps,
+      dto.wrist,
+      dto.ankle,
+      dto.shoulders,
+      dto.neck,
     );
   }
 
