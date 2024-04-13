@@ -18,7 +18,7 @@ import { MeasurementService } from './measurement.service';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CreateMeasurementDto } from './dto';
+import { CreateMeasurementDto, UpdateMeasurementDto } from './dto';
 import { FormDataValidationPipe } from './pipes';
 
 @Controller('measurement')
@@ -33,9 +33,7 @@ export class MeasurementController {
     @GetUser('id') userId: number,
     @Body() dto: CreateMeasurementDto,
     @UploadedFile() file: Express.Multer.File,
-    @Req() req: Request,
   ) {
-    console.log(req.body); 
     return this.measurementService.addMeasurement(
       file,
       userId,
@@ -69,12 +67,13 @@ export class MeasurementController {
     return this.measurementService.getAMeasurements(userId, measurementId);
   }
   @UseGuards(JwtGuard)
+  @UsePipes(FormDataValidationPipe)
   @Put(':id')
   async updateMeasurement(
-    @Body() update:object,
+    @Body() dto: UpdateMeasurementDto,
     @Param('id') measurementId: number,
   ) {
-    return this.measurementService.updateMeasurement(update, measurementId);
+    return this.measurementService.updateMeasurement(dto, measurementId);
   }
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtGuard)
