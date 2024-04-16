@@ -120,7 +120,7 @@ export class UserService {
         );
 
       const pwMatches = await argon.verify(user.hash, oldpassword);
-      if (!pwMatches) throw new ForbiddenException('Credentials incorrect');
+      if (!pwMatches) throw new HttpException('bad request', HttpStatus.BAD_REQUEST);
       const hash = await argon.hash(newPassword);
       const updateUser = await this.prisma.user.update({
         where: {
@@ -133,6 +133,7 @@ export class UserService {
 
       return { message: `${updateUser.email} password has been updated ` };
     } catch (error) {
+      console.log(error)
       throw new HttpException('server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
